@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-@TeleOp(name = "PIDF Tuner")
+@TeleOp(name = "FlywheelTest")
 public class FlywheelTunerTutorial extends OpMode {
 
     public DcMotorEx rFlywheel;
@@ -16,88 +16,45 @@ public class FlywheelTunerTutorial extends OpMode {
     public double highVelocity = 1000;
 
     public double lowVelocity = 0;
+    double curVelocity = lowVelocity;
+    double rightF = 0;
+    double rightP = 0;
 
-    double curTargetVelocity = highVelocity;
-    double F = 0;
-
-    double P = 0;
-
-    double[] stepSizes = {10.0, 1.0,0.1 , 0.001};
-
-    int stepIndex = 1;
-
+    double leftF = 0;
+    double leftP = 0;
 
     @Override
     public void init() {
         rFlywheel = hardwareMap.get(DcMotorEx.class, "rFlywheel");
-
-        rFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         lFlywheel = hardwareMap.get(DcMotorEx.class, "lFlywheel");
 
+        rFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         lFlywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0,F);
-        rFlywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-        lFlywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        PIDFCoefficients rpidfCoefficients = new PIDFCoefficients(rightP,0,0,rightF);
+        PIDFCoefficients lpidfCoefficients = new PIDFCoefficients(leftP,0,0,leftF);
+
+
+        rFlywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, rpidfCoefficients);
+        lFlywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, lpidfCoefficients);
         telemetry.addLine("Init Complete");
     }
 
     @Override
     public void loop() {
 
-        if (gamepad1.yWasPressed()) {
-            if (curTargetVelocity == highVelocity) {
-                curTargetVelocity = lowVelocity;
-            } else  { curTargetVelocity = highVelocity; }
-        }
+       if (gamepad1.xWasPressed()) {
 
-        if (gamepad1.bWasPressed()) {
-            stepIndex = (stepIndex + 1) % stepSizes.length;
-        }
-
-        if (gamepad1.dpadLeftWasPressed()) {
-            F -= stepSizes[stepIndex];
-        }
-        if (gamepad1.dpadRightWasPressed()) {
-            F += stepSizes[stepIndex];
-        }
-
-        if (gamepad1.dpadUpWasPressed()) {
-            P += stepSizes[stepIndex];
-        }
-
-        if (gamepad1.dpadDownWasPressed()) {
-            P -= stepSizes[stepIndex];
-        }
-
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0,F );
-        rFlywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
-
-        rFlywheel.setVelocity(curTargetVelocity);
-
-        lFlywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
-
-        lFlywheel.setVelocity(curTargetVelocity);
-
-        double curVelocity = rFlywheel.getVelocity();
-        double curLeftVelocity = lFlywheel.getVelocity();
-        double error = curTargetVelocity - curVelocity;
-
-        telemetry.addData("Target Velocity", curTargetVelocity);
-        telemetry.addData("Current Velocity", curLeftVelocity);
-        telemetry.addData("Current Velocity", "%.2f", curVelocity);
-        telemetry.addData("Error","%.2f", error);
-        telemetry.addLine("-------------------------------");
-        telemetry.addData("Tuning P", "%.4f (D-Pad U/D)", P);
-        telemetry.addData("Tuning F", "%.4f (D-Pad L/R)", F);
-        telemetry.addData("Step Size", "%.4f (B Button", stepSizes[stepIndex]);
-
-
-
-
-
-
+           if (curVelocity == lowVelocity) {
+               rFlywheel.setVelocity(highVelocity);
+               lFlywheel.setVelocity(highVelocity);
+           }
+           else if (curVelocity == highVelocity) {
+               rFlywheel.setVelocity((lowVelocity));
+               lFlywheel.setVelocity(highVelocity);
+           }
+       }
     }
 }
