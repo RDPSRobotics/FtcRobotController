@@ -19,7 +19,7 @@ public class WebcamOpMode extends OpMode {
     @Override
     public void loop() {
         webcam.update();
-        AprilTagDetection id20 = webcam.getTagSpecificId(20);
+        AprilTagDetection id20 = webcam.getTagBySpecificID(20);
         webcam.displayDetectionTelemetry(id20);
 
     }
