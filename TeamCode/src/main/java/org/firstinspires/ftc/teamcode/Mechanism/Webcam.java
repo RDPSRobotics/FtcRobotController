@@ -72,7 +72,7 @@ public class Webcam {
                  gainControl.setGain(gain);
                  Thread.sleep(20);
              } catch (Exception e) {
-                 telemtry.addData("Camera Control Error", e.getMessage());
+                 telemetry.addData("Camera Control Error", e.getMessage());
                  telemetry.update();
              }
          }
