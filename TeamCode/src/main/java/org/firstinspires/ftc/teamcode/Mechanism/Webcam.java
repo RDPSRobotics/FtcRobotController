@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -14,6 +16,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Webcam {
      private AprilTagProcessor aprilTagProcessor;
@@ -40,12 +43,44 @@ public class Webcam {
          builder.addProcessor(aprilTagProcessor);
 
          visionPortal = builder.build();
+
+         setManualExposure(6,240);
+     }
+
+     private void setManualExposure(int exposureMS, int gain) {
+         if (visionPortal == null || visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+             telemetry.addData("Camera", "Waiting.....");
+
+             while (visionPortal == null || visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                 try { Thread.sleep(20); } catch (InterruptedException ignore) {}
+             }
+             telemetry.addData("Camera", "Ready!");
+         }
+
+         if (visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING) {
+             try {
+                 ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+                 GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+
+                 if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                     exposureControl.setMode(ExposureControl.Mode.Manual);
+                     Thread.sleep(50);
+                 }
+
+                 exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+                 Thread.sleep(20);
+                 gainControl.setGain(gain);
+                 Thread.sleep(20);
+             } catch (Exception e) {
+                 telemtry.addData("Camera Control Error", e.getMessage());
+                 telemetry.update();
+             }
+         }
      }
 
      public void update() {
          detectedTags = aprilTagProcessor.getDetections();
      }
-
 
      public List<AprilTagDetection> getDetectedTags() {
          return detectedTags;
