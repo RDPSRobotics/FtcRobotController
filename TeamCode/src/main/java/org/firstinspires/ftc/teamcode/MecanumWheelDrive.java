@@ -40,7 +40,7 @@ public class MecanumWheelDrive extends OpMode {
         rFront.setVelocity((forward - turn - strafe) * speed);
         rBack.setVelocity((forward - turn + strafe) * speed);
         lFront.setVelocity((forward + turn + strafe) * speed);
-        lBack.setVelocity((forward + turn - strafe) * speed)0;
+        lBack.setVelocity((forward + turn - strafe) * speed);
 
         telemetry.addData("Forward",forward);
         telemetry.addData("Turn", turn);
