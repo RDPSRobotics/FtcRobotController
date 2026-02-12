@@ -63,7 +63,7 @@ public class AprilTagAutoAlignment extends OpMode {
 
         //Auto Align Rotation Logic
 
-        if (gamepad1.left_trigger == 0.3) {
+        if (gamepad1.left_trigger > 0.3) {
             if (id20 != null) {
                 error = goalX - id20.ftcPose.bearing;
 
