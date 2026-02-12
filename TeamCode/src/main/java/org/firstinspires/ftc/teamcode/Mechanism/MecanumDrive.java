@@ -55,8 +55,8 @@ public class MecanumDrive {
 
         rFront.setPower(rFrontPower/maxPower);
         rBack.setPower(rBackPower/maxPower);
-        lFront.setPower(rFrontPower/maxPower);
-        lBack.setPower(rBackPower/maxPower);
+        lFront.setPower(lFrontPower/maxPower);
+        lBack.setPower(lBackPower/maxPower);
     }
 
     public void driveFieldRelative(double forward, double strafe, double rotate) {

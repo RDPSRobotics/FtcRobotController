@@ -126,9 +126,9 @@ public class AprilTagAutoAlignment extends OpMode {
         }
 
         telemetry.addLine("-----------------------------");
-        telemetry.addData("Tuning P", ".4f,(D Pad L/R)", kP );
-        telemetry.addData("Tuning D", ".4f,(D Pad U/P)", kD);
-        telemetry.addData("Step Sizes", ".4f,(B Button)", stepSizes[stepIndex]);
+        telemetry.addData("Tuning P", ".4f%,(D Pad L/R)", kP );
+        telemetry.addData("Tuning D", ".4f%,(D Pad U/P)", kD);
+        telemetry.addData("Step Sizes", ".4f%,(B Button)", stepSizes[stepIndex]);
 
     }
 }
