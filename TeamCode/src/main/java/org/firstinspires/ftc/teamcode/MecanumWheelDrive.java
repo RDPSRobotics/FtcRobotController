@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Mechanism.MecanumDrive;
 @TeleOp
 public class MecanumWheelDrive extends OpMode {
 
-    MecanumDrive drive;
+    MecanumDrive drive = new MecanumDrive();
 
     public double forward, strafe,rotate;
 
