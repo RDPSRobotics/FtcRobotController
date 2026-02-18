@@ -25,7 +25,7 @@ public class AutoIntakeTest extends OpMode {
         }
 
         telemetry.addData("Distance", distanceSensor.getDistancea());
-        telemetry.update(); 
+        telemetry.update();
 
     }
 
