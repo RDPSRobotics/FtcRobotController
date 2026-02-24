@@ -7,26 +7,29 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "FlywheelTest")
 public class FlywheelTunerTutorial extends OpMode {
 
     public DcMotorEx rFlywheel;
     public DcMotorEx lFlywheel;
-    public double highVelocity = 1000;
-
+    public Servo kicker;
+    public double highVelocity = 856;
     public double lowVelocity = 0;
     double curVelocity = lowVelocity;
-    double rightF = 0;
-    double rightP = 0;
+    double rightF = 13.534;
+    double rightP = 88;
 
-    double leftF = 0;
-    double leftP = 0;
+    double leftF = 15.3;
+    double leftP = 97.6;
 
     @Override
     public void init() {
         rFlywheel = hardwareMap.get(DcMotorEx.class, "rFlywheel");
         lFlywheel = hardwareMap.get(DcMotorEx.class, "lFlywheel");
+
+        kicker = hardwareMap.get(Servo.class, "kicker");
 
         rFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -50,11 +53,18 @@ public class FlywheelTunerTutorial extends OpMode {
            if (curVelocity == lowVelocity) {
                rFlywheel.setVelocity(highVelocity);
                lFlywheel.setVelocity(highVelocity);
-           }
-           else if (curVelocity == highVelocity) {
-               rFlywheel.setVelocity((lowVelocity));
-               lFlywheel.setVelocity(highVelocity);
+
+               kicker.setPosition(0.05);
            }
        }
+
+       if (gamepad1.aWasPressed()) {
+           if (curVelocity == highVelocity) {
+               rFlywheel.setVelocity(lowVelocity);
+               lFlywheel.setVelocity(lowVelocity);
+               kicker.setPosition(0.0);
+           }
+       }
+
     }
 }
