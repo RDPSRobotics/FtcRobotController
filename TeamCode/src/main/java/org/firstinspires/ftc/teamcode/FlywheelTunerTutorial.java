@@ -54,17 +54,18 @@ public class FlywheelTunerTutorial extends OpMode {
                rFlywheel.setVelocity(highVelocity);
                lFlywheel.setVelocity(highVelocity);
 
-               kicker.setPosition(0.05);
-           }
-       }
+               kicker.setPosition(1);
 
-       if (gamepad1.aWasPressed()) {
-           if (curVelocity == highVelocity) {
+               curVelocity = highVelocity;
+           }
+           else if (curVelocity == highVelocity) {
                rFlywheel.setVelocity(lowVelocity);
                lFlywheel.setVelocity(lowVelocity);
-               kicker.setPosition(0.0);
+
+               kicker.setPosition(0);
+
+               curVelocity = lowVelocity;
            }
        }
-
     }
 }
