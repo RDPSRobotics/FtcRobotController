@@ -20,7 +20,6 @@ public class FlywheelTunerTutorial extends OpMode {
     double curVelocity = lowVelocity;
     double rightF = 13.534;
     double rightP = 88;
-
     double leftF = 15.3;
     double leftP = 97.6;
 
@@ -38,7 +37,6 @@ public class FlywheelTunerTutorial extends OpMode {
 
         PIDFCoefficients rpidfCoefficients = new PIDFCoefficients(rightP,0,0,rightF);
         PIDFCoefficients lpidfCoefficients = new PIDFCoefficients(leftP,0,0,leftF);
-
 
         rFlywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, rpidfCoefficients);
         lFlywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, lpidfCoefficients);
