@@ -8,19 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Mechanism.MecanumDrive;
-import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+enum ShootState{START, SHOOT, INTAKE, END}
 @TeleOp
-public class RDPS extends OpMode {
-
-    //---------------Driving Variables------------
-    MecanumDrive drive = new MecanumDrive();
-    public double forward,strafe,rotate;
-
-    //----------------Webcam/Auto Alignment Variables---------------
-    Webcam webcam = new Webcam();
-
+public class Shooting extends OpMode {
     //--------------Shooter Variables-------------
     public DcMotorEx rFlywheel;
     public DcMotorEx lFlywheel;
@@ -29,18 +21,12 @@ public class RDPS extends OpMode {
     PIDFCoefficients lpidfCoefficients = new PIDFCoefficients(97.6,0,0,15.3);
     double highVelocity = 856;
     double lowVelocity = 0;
-    double curVelocity;
 
+    ShootState state = ShootState.START;
     //--------------Intake Variables--------------
     public DcMotorEx intake;
 
     public void init() {
-
-        //Drive Init
-        drive.init(hardwareMap);
-
-        //Webcam Init
-        webcam.init(hardwareMap,telemetry);
 
         //Shooting Init
         rFlywheel = hardwareMap.get(DcMotorEx.class, "rFlywheel");
@@ -64,44 +50,58 @@ public class RDPS extends OpMode {
     }
 
     public void loop() {
-        //Controller Inputs
-        forward = gamepad1.left_stick_y;
-        strafe = gamepad1.left_stick_x;
-        rotate = gamepad1.right_stick_x;
 
-        drive.drive(forward,strafe,rotate);
+        switch (state) {
+            case START:
+                if (gamepad1.right_trigger > 0.3) {
+                    rFlywheel.setVelocity(highVelocity);
+                    lFlywheel.setVelocity(highVelocity);
 
-        if (gamepad1.xWasPressed()) {
+                    //Auto Align
+                }
 
-            if (curVelocity == lowVelocity) {
-                rFlywheel.setVelocity(highVelocity);
-                lFlywheel.setVelocity(highVelocity);
+                if (rFlywheel.getVelocity() + lFlywheel.getVelocity() >= (highVelocity * 2) - 20) {
+                    resetRuntime();
+                    state = ShootState.SHOOT;
+                }
+                break;
+            case SHOOT:
+                kicker.setPosition(0);
 
-                curVelocity = highVelocity;
-            }
-            else if (curVelocity == highVelocity) {
+                if (getRuntime() > 0.25) {
+                    kicker.setPosition(1);
+                }
+
+                if (getRuntime() > 0.5) {
+
+                    resetRuntime();
+
+                    state = ShootState.INTAKE;
+                }
+                break;
+            case INTAKE:
+                intake.setPower(0.5);
+
+                if (getRuntime()  > 2) {
+                    resetRuntime();
+
+                    state = ShootState.END;
+                }
+                break;
+            case END:
                 rFlywheel.setVelocity(lowVelocity);
                 lFlywheel.setVelocity(lowVelocity);
 
-                curVelocity = lowVelocity;
-            }
-        }
+                intake.setPower(0);
 
-        if (gamepad1.aWasPressed()) {
-            if (kicker.getPosition() == 1) {
-                kicker.setPosition(0);
-            }
-            else if (kicker.getPosition() == 0) {
-                kicker.setPosition(1);
-            }
+                //Turn off auto alignment
 
-        }
+                if (getRuntime() > 1) {
 
-        if (gamepad1.left_trigger > 0.3) {
-            intake.setPower(0.5);
-        }
-        else {
-            intake.setPower(0);
+                    state = ShootState.START;
+                    telemetry.addLine("Start");
+                }
+                break;
         }
     }
 }
