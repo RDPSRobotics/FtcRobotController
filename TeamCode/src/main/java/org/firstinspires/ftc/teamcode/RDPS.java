@@ -23,7 +23,6 @@ public class RDPS extends OpMode {
 
     //----------------Webcam/Auto Alignment Variables---------------
     Webcam webcam = new Webcam();
-
     double kP = 0.019;
     double error = 0;
     double lastError = 0;
@@ -32,6 +31,7 @@ public class RDPS extends OpMode {
     double kD = 0.0001;
     double curTime = 0;
     double lastTime = 0;
+    boolean autoAlign;
 
     //--------------Shooter Variables-------------
     public DcMotorEx rFlywheel;
@@ -73,6 +73,8 @@ public class RDPS extends OpMode {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        autoAlign = false;
     }
 
     public void start() {
@@ -90,7 +92,7 @@ public class RDPS extends OpMode {
         webcam.update();
         AprilTagDetection id20 = webcam.getTagBySpecificID(20);
 
-        if (gamepad1.right_trigger > 0.3) {
+        if (autoAlign) {
             if (id20 != null) {
                 error = goalX - id20.ftcPose.bearing;
 
@@ -127,7 +129,7 @@ public class RDPS extends OpMode {
                     rFlywheel.setVelocity(highVelocity);
                     lFlywheel.setVelocity(highVelocity);
 
-                    //Auto Align
+                    autoAlign = true;
                 }
 
                 if (rFlywheel.getVelocity() + lFlywheel.getVelocity() >= (highVelocity * 2) - 20) {
@@ -152,7 +154,7 @@ public class RDPS extends OpMode {
             case INTAKE:
                 intake.setPower(0.5);
 
-                if (getRuntime()  > 2) {
+                if (getRuntime()  > 1) {
                     resetRuntime();
 
                     state = ShootState.END;
@@ -162,7 +164,7 @@ public class RDPS extends OpMode {
                 rFlywheel.setVelocity(lowVelocity);
                 lFlywheel.setVelocity(lowVelocity);
 
-                //Turn off auto alignment
+                autoAlign = false;
 
                 if (getRuntime() > 1) {
 
@@ -173,6 +175,9 @@ public class RDPS extends OpMode {
 
         if (gamepad1.left_trigger > 0.3) {
             intake.setPower(0.5);
+        }
+        else if (gamepad1.leftBumperWasPressed()) {
+            intake.setPower(-0.2);
         }
         else if (state == ShootState.START) {
             intake.setPower(0);
