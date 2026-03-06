@@ -142,7 +142,7 @@ public class RDPS extends OpMode {
                 kicker.setPosition(0);
 
                 if (getRuntime() > 0.25) {
-                    kicker.setPosition(1);
+                    kicker.setPosition(0.6);
                 }
 
                 if (getRuntime() > 0.5) {
