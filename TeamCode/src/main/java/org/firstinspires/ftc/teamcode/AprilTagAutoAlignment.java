@@ -30,7 +30,7 @@ public class AprilTagAutoAlignment extends OpMode {
 
     //------------------CONTROLLER BASED PD TUNING-------------------------
 
-    double[] stepSizes = {0.1, 0.01, 0.001};
+    double[] stepSizes = {0.1, 0.01, 0.001, 0.0001};
 
     int stepIndex = 1;
 
@@ -67,11 +67,14 @@ public class AprilTagAutoAlignment extends OpMode {
                 error = goalX - id20.ftcPose.bearing;
 
                 if (Math.abs(error) < angleTolerance) {
-                    double pTerm = error * kP;
+                    rotate = 0;
+                }
+                else {
+                    double pTerm = -error * kP;
 
                     curTime = getRuntime();
                     double dT = curTime - lastTime;
-                    double dTerm = ((error - lastError)/dT) * kD;
+                    double dTerm = ((-error - lastError)/dT) * kD;
 
                     rotate = Range.clip(pTerm + dTerm, -0.4, 0.4);
 
