@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 
-@TeleOp(name = "RDPS BLUE")
-public class RDPS extends OpMode {
+@TeleOp(name = "RDPS RED")
+public class RDPSRED extends OpMode {
 
     //---------------Driving Variables------------
     MecanumDrive drive = new MecanumDrive();
@@ -88,11 +88,11 @@ public class RDPS extends OpMode {
 
         //Get April Tag Info
         webcam.update();
-        AprilTagDetection id20 = webcam.getTagBySpecificID(20);
+        AprilTagDetection id24 = webcam.getTagBySpecificID(24);
 
         if (gamepad1.right_trigger > 0.3) {
-            if (id20 != null) {
-                error = goalX - id20.ftcPose.bearing;
+            if (id24 != null) {
+                error = goalX - id24.ftcPose.bearing;
 
                 if (Math.abs(error) < angleTolerance) {
                     rotate = 0;
@@ -185,11 +185,11 @@ public class RDPS extends OpMode {
         }
 
         //Telemetry
-        if (id20 != null) {
+        if (id24 != null) {
             if (gamepad1.left_trigger > 0.3) {
                 telemetry.addLine("AUTO ALIGN");
             }
-            webcam.displayDetectionTelemetry(id20);
+            webcam.displayDetectionTelemetry(id24);
             telemetry.addData("Error", error);
 
         } else {
