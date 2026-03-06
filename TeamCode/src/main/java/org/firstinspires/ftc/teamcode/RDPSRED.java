@@ -23,7 +23,6 @@ public class RDPSRED extends OpMode {
 
     //----------------Webcam/Auto Alignment Variables---------------
     Webcam webcam = new Webcam();
-
     double kP = 0.019;
     double error = 0;
     double lastError = 0;
@@ -32,6 +31,8 @@ public class RDPSRED extends OpMode {
     double kD = 0;
     double curTime = 0;
     double lastTime = 0;
+
+    boolean autoAlign;
 
     //--------------Shooter Variables-------------
     public DcMotorEx rFlywheel;
@@ -53,6 +54,8 @@ public class RDPSRED extends OpMode {
 
         //Webcam Init
         webcam.init(hardwareMap,telemetry);
+
+        autoAlign = false;
 
         //Shooting Init
         rFlywheel = hardwareMap.get(DcMotorEx.class, "rFlywheel");
@@ -90,7 +93,7 @@ public class RDPSRED extends OpMode {
         webcam.update();
         AprilTagDetection id24 = webcam.getTagBySpecificID(24);
 
-        if (gamepad1.right_trigger > 0.3) {
+        if (autoAlign) {
             if (id24 != null) {
                 error = goalX - id24.ftcPose.bearing;
 
@@ -130,7 +133,7 @@ public class RDPSRED extends OpMode {
                     rFlywheel.setVelocity(highVelocity);
                     lFlywheel.setVelocity(highVelocity);
 
-                    //Auto Align
+                    autoAlign = true;
                 }
 
                 if (rFlywheel.getVelocity() + lFlywheel.getVelocity() >= (highVelocity * 2) - 20) {
@@ -165,7 +168,7 @@ public class RDPSRED extends OpMode {
                 rFlywheel.setVelocity(lowVelocity);
                 lFlywheel.setVelocity(lowVelocity);
 
-                //Turn off auto alignment
+                autoAlign = false;
 
                 if (getRuntime() > 1) {
 
