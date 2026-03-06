@@ -29,7 +29,7 @@ public class RDPS extends OpMode {
     double lastError = 0;
     double goalX = 0;
     double angleTolerance = 0.4;
-    double kD = 0;
+    double kD = 0.0001;
     double curTime = 0;
     double lastTime = 0;
 
@@ -95,9 +95,6 @@ public class RDPS extends OpMode {
                 error = goalX - id20.ftcPose.bearing;
 
                 if (Math.abs(error) < angleTolerance) {
-                    rotate = 0;
-                }
-                else {
                     double pTerm = error * kP;
 
                     curTime = getRuntime();
@@ -155,7 +152,7 @@ public class RDPS extends OpMode {
             case INTAKE:
                 intake.setPower(0.5);
 
-                if (getRuntime()  > 1.5d) {
+                if (getRuntime()  > 2) {
                     resetRuntime();
 
                     state = ShootState.END;
@@ -176,9 +173,6 @@ public class RDPS extends OpMode {
 
         if (gamepad1.left_trigger > 0.3) {
             intake.setPower(0.5);
-        }
-        else if (gamepad1.left_bumper == true) {
-            intake.setPower(-0.20);
         }
         else if (state == ShootState.START) {
             intake.setPower(0);
