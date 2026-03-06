@@ -40,6 +40,9 @@ public class AutoFarBlue extends OpMode {
     //--------------Intake Variables--------------
     public DcMotorEx intake;
 
+    //--------------Target Position Variables---------------
+
+    int targetPositionIndex;
 
     public void init() {
         rFront = hardwareMap.get(DcMotor.class, "rFront");
@@ -74,62 +77,88 @@ public class AutoFarBlue extends OpMode {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        //Auto init
+
+        targetPositionIndex = 0;
     }
 
     public void loop() {
-        moveMotorToPosition(-1000,1000,1000,-1000, 0.5);
+        if (targetPositionIndex == 0) {
+            moveMotorToPosition(-200,200,200,-200, 0.5);
 
-        moveMotorToPosition(200,200,-200,-200, 0.5);
+            resetRuntime();
+        }
+        else if (targetPositionIndex == 1) {
+            if (rFront.isBusy()) {
+                return;
+            }
 
-        //Shoot Code
-        switch (state) {
-            case START:
+            moveMotorToPosition(-200,-200,200,200, 0.5);
 
-                rFlywheel.setVelocity(highVelocity);
-                lFlywheel.setVelocity(highVelocity);
+        }
+        else if (targetPositionIndex == 2) {
+            if (rFront.isBusy()) {
+                return;
+            }
 
-                autoAlign = true;
+            //Shoot Code
+            switch (state) {
+                case START:
+
+                    rFlywheel.setVelocity(highVelocity);
+                    lFlywheel.setVelocity(highVelocity);
+
+                    autoAlign = true;
 
 
-                if (rFlywheel.getVelocity() + lFlywheel.getVelocity() >= (highVelocity * 2) - 20) {
-                    resetRuntime();
-                    state = ShootState.SHOOT;
-                }
-                break;
-            case SHOOT:
-                kicker.setPosition(0);
+                    if (rFlywheel.getVelocity() + lFlywheel.getVelocity() >= (highVelocity * 2) - 20) {
+                        resetRuntime();
+                        state = ShootState.SHOOT;
+                    }
+                    break;
+                case SHOOT:
+                    kicker.setPosition(0);
 
-                if (getRuntime() > 0.25) {
-                    kicker.setPosition(1);
-                }
+                    if (getRuntime() > 0.25) {
+                        kicker.setPosition(1);
+                    }
 
-                if (getRuntime() > 0.5) {
+                    if (getRuntime() > 0.5) {
 
-                    resetRuntime();
+                        resetRuntime();
 
-                    state = ShootState.INTAKE;
-                }
-                break;
-            case INTAKE:
-                intake.setPower(0.75);
+                        state = ShootState.INTAKE;
+                    }
+                    break;
+                case INTAKE:
+                    intake.setPower(0.75);
 
-                if (getRuntime()  > 2) {
-                    resetRuntime();
+                    if (getRuntime()  > 2) {
+                        resetRuntime();
 
-                    state = ShootState.END;
-                }
-                break;
-            case END:
-                rFlywheel.setVelocity(lowVelocity);
-                lFlywheel.setVelocity(lowVelocity);
+                        state = ShootState.END;
+                    }
+                    break;
+                case END:
+                    rFlywheel.setVelocity(lowVelocity);
+                    lFlywheel.setVelocity(lowVelocity);
 
-                autoAlign = false;
+                    autoAlign = false;
 
-                if (getRuntime() > 1) {
+                    if (getRuntime() > 1) {
+                        moveMotorToPosition(-500,500,500,-500,0.5);
 
-                    moveMotorToPosition(500,500,500,500,0.5);
-                }
-                break;
+                    }
+                    break;
+            }
+        }
+        else if (targetPositionIndex == 3) {
+            rFront.setPower(0);
+            rBack.setPower(0);
+            lFront.setPower(0);
+            lBack.setPower(0);
         }
     }
 
@@ -159,11 +188,7 @@ public class AutoFarBlue extends OpMode {
             telemetry.update();
         }
 
-        // Stop the motor or set power to zero once the position is reached
-        rFront.setPower(0);
-        lBack.setPower(0);
-        lFront.setPower(0);
-        rBack.setPower(0);
+        targetPositionIndex++;
         // Optionally, you might want to switch back to a different mode here if needed
         // e.g., myMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }

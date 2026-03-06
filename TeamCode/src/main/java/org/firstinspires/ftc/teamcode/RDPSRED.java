@@ -23,6 +23,7 @@ public class RDPSRED extends OpMode {
 
     //----------------Webcam/Auto Alignment Variables---------------
     Webcam webcam = new Webcam();
+
     double kP = 0.019;
     double error = 0;
     double lastError = 0;
@@ -31,9 +32,7 @@ public class RDPSRED extends OpMode {
     double kD = 0;
     double curTime = 0;
     double lastTime = 0;
-
     boolean autoAlign;
-
     //--------------Shooter Variables-------------
     public DcMotorEx rFlywheel;
     public DcMotorEx lFlywheel;
@@ -56,7 +55,6 @@ public class RDPSRED extends OpMode {
         webcam.init(hardwareMap,telemetry);
 
         autoAlign = false;
-
         //Shooting Init
         rFlywheel = hardwareMap.get(DcMotorEx.class, "rFlywheel");
         lFlywheel = hardwareMap.get(DcMotorEx.class, "lFlywheel");
@@ -145,7 +143,7 @@ public class RDPSRED extends OpMode {
                 kicker.setPosition(0);
 
                 if (getRuntime() > 0.25) {
-                    kicker.setPosition(1);
+                    kicker.setPosition(0.6);
                 }
 
                 if (getRuntime() > 0.5) {
@@ -156,9 +154,9 @@ public class RDPSRED extends OpMode {
                 }
                 break;
             case INTAKE:
-                intake.setPower(0.75);
+                intake.setPower(0.5);
 
-                if (getRuntime()  > 2) {
+                if (getRuntime()  > 1) {
                     resetRuntime();
 
                     state = ShootState.END;
@@ -178,10 +176,10 @@ public class RDPSRED extends OpMode {
         }
 
         if (gamepad1.left_trigger > 0.3) {
-            intake.setPower(0.75);
+            intake.setPower(0.5);
         }
-        else if (gamepad1.leftBumperWasPressed()) {
-            intake.setPower(-0.2);
+        else if (gamepad1.left_bumper == true) {
+            intake.setPower(-0.25);
         }
         else if (state == ShootState.START) {
             intake.setPower(0);

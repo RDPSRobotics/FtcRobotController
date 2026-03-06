@@ -40,6 +40,9 @@ public class AutoCloseRed extends OpMode {
     //--------------Intake Variables--------------
     public DcMotorEx intake;
 
+    //--------------Target Position Variables---------------
+
+    int targetPositionIndex;
 
     public void init() {
         rFront = hardwareMap.get(DcMotor.class, "rFront");
@@ -74,64 +77,85 @@ public class AutoCloseRed extends OpMode {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        //Auto init
+
+        targetPositionIndex = 0;
     }
 
     public void loop() {
-        moveMotorToPosition(1000,1000,1000,1000, 0.5);
+        if (targetPositionIndex == 0) {
+            moveMotorToPosition(3192,3192,3080,3080, 0.25);
 
-        //Shoot Code
-        switch (state) {
-            case START:
+            resetRuntime();
+        }
+        else if (targetPositionIndex == 1) {
+            if (rFront.isBusy()) {
+                return;
+            }
 
-                rFlywheel.setVelocity(highVelocity);
-                lFlywheel.setVelocity(highVelocity);
+            //Shoot Code
+            switch (state) {
+                case START:
 
-                autoAlign = true;
+                    rFlywheel.setVelocity(highVelocity);
+                    lFlywheel.setVelocity(highVelocity);
+
+                    autoAlign = true;
 
 
-                if (rFlywheel.getVelocity() + lFlywheel.getVelocity() >= (highVelocity * 2) - 20) {
-                    resetRuntime();
-                    state = ShootState.SHOOT;
-                }
-                break;
-            case SHOOT:
-                kicker.setPosition(0);
+                    if (rFlywheel.getVelocity() + lFlywheel.getVelocity() >= (highVelocity * 2) - 20) {
+                        resetRuntime();
+                        state = ShootState.SHOOT;
+                    }
+                    break;
+                case SHOOT:
+                    kicker.setPosition(0);
 
-                if (getRuntime() > 0.25) {
-                    kicker.setPosition(1);
-                }
+                    if (getRuntime() > 0.25) {
+                        kicker.setPosition(1);
+                    }
 
-                if (getRuntime() > 0.5) {
+                    if (getRuntime() > 0.5) {
 
-                    resetRuntime();
+                        resetRuntime();
 
-                    state = ShootState.INTAKE;
-                }
-                break;
-            case INTAKE:
-                intake.setPower(0.75);
+                        state = ShootState.INTAKE;
+                    }
+                    break;
+                case INTAKE:
+                    intake.setPower(0.65);
 
-                if (getRuntime()  > 2) {
-                    resetRuntime();
+                    if (getRuntime()  > 2) {
+                        resetRuntime();
 
-                    state = ShootState.END;
-                }
-                break;
-            case END:
-                rFlywheel.setVelocity(lowVelocity);
-                lFlywheel.setVelocity(lowVelocity);
+                        state = ShootState.END;
+                    }
+                    break;
+                case END:
+                    rFlywheel.setVelocity(lowVelocity);
+                    lFlywheel.setVelocity(lowVelocity);
 
-                autoAlign = false;
+                    intake.setPower(0);
 
-                if (getRuntime() > 1) {
+                    autoAlign = false;
 
-                    moveMotorToPosition(500,-500,-500,500,0.5);
-                }
-                break;
+                    if (getRuntime() > 1) {
+                        moveMotorToPosition(-750,750,750,-750,0.5);
+                        targetPositionIndex++;
+                    }
+                    break;
+            }
         }
     }
 
     public void moveMotorToPosition(int rFTP,int rBTP,int lFTP,int lBTP, double power) {
+        rFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         // Set the new target position
         rFront.setTargetPosition(rFTP);
         rBack.setTargetPosition(rBTP);
@@ -157,11 +181,7 @@ public class AutoCloseRed extends OpMode {
             telemetry.update();
         }
 
-        // Stop the motor or set power to zero once the position is reached
-        rFront.setPower(0);
-        lBack.setPower(0);
-        lFront.setPower(0);
-        rBack.setPower(0);
+        targetPositionIndex++;
         // Optionally, you might want to switch back to a different mode here if needed
         // e.g., myMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }

@@ -25,6 +25,7 @@ public class AprilTagAutoAlignment extends OpMode {
     double curTime = 0;
     double lastTime = 0;
 
+
     //-------------------DRIVING SETUP-----------------------
     double forward, strafe, rotate;
 
