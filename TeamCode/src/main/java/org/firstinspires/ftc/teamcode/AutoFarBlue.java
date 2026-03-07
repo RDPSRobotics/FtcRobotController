@@ -7,13 +7,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@Autonomous (name = "FarBlue")
+@Autonomous (name = "Far Blue")
 public class AutoFarBlue extends OpMode {
     //---------------Driving Variables------------
     DcMotor rFront,rBack,lFront,lBack;
+
+    double rotate;
 
     //----------------Webcam/Auto Alignment Variables---------------
     Webcam webcam = new Webcam();
@@ -86,19 +90,21 @@ public class AutoFarBlue extends OpMode {
 
     public void loop() {
         if (targetPositionIndex == 0) {
-            moveMotorToPosition(-200,200,200,-200, 0.5);
+            moveMotorToPosition(-500,500,500,-500, 0.5);
 
             resetRuntime();
         }
         else if (targetPositionIndex == 1) {
+
             if (rFront.isBusy()) {
                 return;
             }
 
-            moveMotorToPosition(-200,-200,200,200, 0.5);
+            moveMotorToPosition(300,300,-300,-300, 0.5);
 
         }
         else if (targetPositionIndex == 2) {
+
             if (rFront.isBusy()) {
                 return;
             }
@@ -109,6 +115,16 @@ public class AutoFarBlue extends OpMode {
 
                     rFlywheel.setVelocity(highVelocity);
                     lFlywheel.setVelocity(highVelocity);
+
+                    rFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    lBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                    rFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    rBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    lFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    lBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
                     autoAlign = true;
 
@@ -133,9 +149,9 @@ public class AutoFarBlue extends OpMode {
                     }
                     break;
                 case INTAKE:
-                    intake.setPower(0.75);
+                    intake.setPower(0.5);
 
-                    if (getRuntime()  > 2) {
+                    if (getRuntime()  > 1) {
                         resetRuntime();
 
                         state = ShootState.END;
@@ -148,17 +164,59 @@ public class AutoFarBlue extends OpMode {
                     autoAlign = false;
 
                     if (getRuntime() > 1) {
-                        moveMotorToPosition(-500,500,500,-500,0.5);
-
+                        moveMotorToPosition(-500,-500,-500,-500,0.5);
                     }
                     break;
             }
         }
         else if (targetPositionIndex == 3) {
+            if (rFront.isBusy()) {
+                return;
+            }
+
             rFront.setPower(0);
             rBack.setPower(0);
             lFront.setPower(0);
             lBack.setPower(0);
+        }
+
+        webcam.update();
+        AprilTagDetection id20 = webcam.getTagBySpecificID(20);
+
+        if (autoAlign) {
+            if (id20 != null) {
+                error = goalX - id20.ftcPose.bearing;
+
+                if (Math.abs(error) < angleTolerance) {
+                    rotate = 0;
+                }
+                else {
+                    double pTerm = -error * kP;
+
+                    curTime = getRuntime();
+                    double dT = curTime - lastTime;
+                    double dTerm = ((-error - lastError)/dT) * kD;
+
+                    rotate = Range.clip(pTerm + dTerm, -0.4, 0.4);
+
+                    lastError = error;
+                    lastTime = curTime;
+
+                }
+            }
+            else {
+                lastTime = getRuntime();
+                lastError = 0;
+            }
+
+            rFront.setPower(-rotate);
+            lBack.setPower(rotate);
+            lFront.setPower(rotate);
+            rBack.setPower(-rotate);
+        }
+        else {
+            lastTime = getRuntime();
+            lastError = 0;
         }
     }
 

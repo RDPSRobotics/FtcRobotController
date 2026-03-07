@@ -80,15 +80,13 @@ public class AutoCloseRed extends OpMode {
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
         //Auto init
-
         targetPositionIndex = 0;
     }
 
     public void loop() {
         if (targetPositionIndex == 0) {
-            moveMotorToPosition(3080,3080,3080,3080, 0.25);
+            moveMotorToPosition(3080,3080,3080,3080, 0.5);
 
             resetRuntime();
         }
@@ -103,6 +101,16 @@ public class AutoCloseRed extends OpMode {
 
                     rFlywheel.setVelocity(highVelocity);
                     lFlywheel.setVelocity(highVelocity);
+
+                    rFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    lBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                    rFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    rBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    lFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    lBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
                     autoAlign = true;
 
@@ -149,6 +157,17 @@ public class AutoCloseRed extends OpMode {
                     }
                     break;
             }
+        }
+        else if (targetPositionIndex == 2) {
+            if (rFront.isBusy()) {
+                return;
+            }
+
+            rFront.setPower(0);
+            rBack.setPower(0);
+            lFront.setPower(0);
+            lBack.setPower(0);
+
         }
 
         webcam.update();
@@ -223,8 +242,7 @@ public class AutoCloseRed extends OpMode {
         }
 
         targetPositionIndex++;
-        // Optionally, you might want to switch back to a different mode here if needed
-        // e.g., myMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
 

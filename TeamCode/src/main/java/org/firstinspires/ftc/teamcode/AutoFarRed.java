@@ -9,15 +9,16 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Mechanism.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@Autonomous (name = "Close Blue")
-public class Auto extends OpMode {
+@Autonomous (name = "Far Red")
+public class AutoFarRed extends OpMode {
     //---------------Driving Variables------------
     DcMotor rFront,rBack,lFront,lBack;
+
     double rotate;
+
     //----------------Webcam/Auto Alignment Variables---------------
     Webcam webcam = new Webcam();
     double kP = 0.019;
@@ -89,11 +90,21 @@ public class Auto extends OpMode {
 
     public void loop() {
         if (targetPositionIndex == 0) {
-            moveMotorToPosition(3192,3192,3080,3080, 0.5);
+            moveMotorToPosition(500,-500,-500,500, 0.5);
 
             resetRuntime();
         }
         else if (targetPositionIndex == 1) {
+
+            if (rFront.isBusy()) {
+                return;
+            }
+
+            moveMotorToPosition(-300,-300,300,300, 0.5);
+
+        }
+        else if (targetPositionIndex == 2) {
+
             if (rFront.isBusy()) {
                 return;
             }
@@ -117,6 +128,7 @@ public class Auto extends OpMode {
 
                     autoAlign = true;
 
+
                     if (rFlywheel.getVelocity() + lFlywheel.getVelocity() >= (highVelocity * 2) - 20) {
                         resetRuntime();
                         state = ShootState.SHOOT;
@@ -139,7 +151,7 @@ public class Auto extends OpMode {
                 case INTAKE:
                     intake.setPower(0.5);
 
-                    if (getRuntime()  > 2) {
+                    if (getRuntime()  > 1) {
                         resetRuntime();
 
                         state = ShootState.END;
@@ -149,18 +161,15 @@ public class Auto extends OpMode {
                     rFlywheel.setVelocity(lowVelocity);
                     lFlywheel.setVelocity(lowVelocity);
 
-                    intake.setPower(0);
-
                     autoAlign = false;
 
                     if (getRuntime() > 1) {
-                        moveMotorToPosition(750,-750,-750,750,0.5);
-                        targetPositionIndex++;
+                        moveMotorToPosition(-500,-500,-500,-500,0.5);
                     }
                     break;
             }
         }
-        else if (targetPositionIndex == 2) {
+        else if (targetPositionIndex == 3) {
             if (rFront.isBusy()) {
                 return;
             }
@@ -169,15 +178,14 @@ public class Auto extends OpMode {
             rBack.setPower(0);
             lFront.setPower(0);
             lBack.setPower(0);
-
         }
 
         webcam.update();
-        AprilTagDetection id20 = webcam.getTagBySpecificID(20);
+        AprilTagDetection id24 = webcam.getTagBySpecificID(24);
 
         if (autoAlign) {
-            if (id20 != null) {
-                error = goalX - id20.ftcPose.bearing;
+            if (id24 != null) {
+                error = goalX - id24.ftcPose.bearing;
 
                 if (Math.abs(error) < angleTolerance) {
                     rotate = 0;
@@ -213,11 +221,6 @@ public class Auto extends OpMode {
     }
 
     public void moveMotorToPosition(int rFTP,int rBTP,int lFTP,int lBTP, double power) {
-        rFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         // Set the new target position
         rFront.setTargetPosition(rFTP);
         rBack.setTargetPosition(rBTP);
