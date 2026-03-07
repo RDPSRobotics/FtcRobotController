@@ -7,14 +7,16 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @Autonomous (name = "Close Red")
 public class AutoCloseRed extends OpMode {
     //---------------Driving Variables------------
     DcMotor rFront,rBack,lFront,lBack;
-
+    double rotate;
     //----------------Webcam/Auto Alignment Variables---------------
     Webcam webcam = new Webcam();
     double kP = 0.019;
@@ -86,7 +88,7 @@ public class AutoCloseRed extends OpMode {
 
     public void loop() {
         if (targetPositionIndex == 0) {
-            moveMotorToPosition(3192,3192,3080,3080, 0.25);
+            moveMotorToPosition(3080,3080,3080,3080, 0.25);
 
             resetRuntime();
         }
@@ -147,6 +149,45 @@ public class AutoCloseRed extends OpMode {
                     }
                     break;
             }
+        }
+
+        webcam.update();
+        AprilTagDetection id24 = webcam.getTagBySpecificID(24);
+
+        if (autoAlign) {
+            if (id24 != null) {
+                error = goalX - id24.ftcPose.bearing;
+
+                if (Math.abs(error) < angleTolerance) {
+                    rotate = 0;
+                }
+                else {
+                    double pTerm = -error * kP;
+
+                    curTime = getRuntime();
+                    double dT = curTime - lastTime;
+                    double dTerm = ((-error - lastError)/dT) * kD;
+
+                    rotate = Range.clip(pTerm + dTerm, -0.4, 0.4);
+
+                    lastError = error;
+                    lastTime = curTime;
+
+                }
+            }
+            else {
+                lastTime = getRuntime();
+                lastError = 0;
+            }
+
+            rFront.setPower(-rotate);
+            lBack.setPower(rotate);
+            lFront.setPower(rotate);
+            rBack.setPower(-rotate);
+        }
+        else {
+            lastTime = getRuntime();
+            lastError = 0;
         }
     }
 
