@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Decode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 
-@TeleOp(name = "RDPS RED")
-public class RDPSRED extends OpMode {
+@TeleOp(name = "RDPS BLUE")
+public class RDPS extends OpMode {
 
     //---------------Driving Variables------------
     MecanumDrive drive = new MecanumDrive();
@@ -89,11 +89,11 @@ public class RDPSRED extends OpMode {
 
         //Get April Tag Info
         webcam.update();
-        AprilTagDetection id24 = webcam.getTagBySpecificID(24);
+        AprilTagDetection id20 = webcam.getTagBySpecificID(20);
 
         if (autoAlign) {
-            if (id24 != null) {
-                error = goalX - id24.ftcPose.bearing;
+            if (id20 != null) {
+                error = goalX - id20.ftcPose.bearing;
 
                 if (Math.abs(error) < angleTolerance) {
                     rotate = 0;
@@ -122,12 +122,12 @@ public class RDPSRED extends OpMode {
             lastError = 0;
         }
 
-        drive.drive(forward,strafe,rotate);
+        drive.drive(forward,-strafe,rotate);
 
         //Shoot Code
         switch (state) {
             case START:
-                if (gamepad1.right_trigger > 0.3) {
+                if (gamepad1.right_trigger > 0.3 || gamepad2.right_trigger > 0.3) {
                     rFlywheel.setVelocity(highVelocity);
                     lFlywheel.setVelocity(highVelocity);
 
@@ -143,10 +143,10 @@ public class RDPSRED extends OpMode {
                 kicker.setPosition(0);
 
                 if (getRuntime() > 0.25) {
-                    kicker.setPosition(0.6);
+                    kicker.setPosition(1);
                 }
 
-                if (getRuntime() > 0.5) {
+                if (getRuntime() > 0.75) {
 
                     resetRuntime();
 
@@ -178,7 +178,7 @@ public class RDPSRED extends OpMode {
         if (gamepad1.left_trigger > 0.3) {
             intake.setPower(0.5);
         }
-        else if (gamepad1.left_bumper == true) {
+        else if (gamepad1.left_bumper == true || gamepad2.left_bumper == true ) {
             intake.setPower(-0.25);
         }
         else if (state == ShootState.START) {
@@ -186,11 +186,11 @@ public class RDPSRED extends OpMode {
         }
 
         //Telemetry
-        if (id24 != null) {
+        if (id20 != null) {
             if (gamepad1.left_trigger > 0.3) {
                 telemetry.addLine("AUTO ALIGN");
             }
-            webcam.displayDetectionTelemetry(id24);
+            webcam.displayDetectionTelemetry(id20);
             telemetry.addData("Error", error);
 
         } else {

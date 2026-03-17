@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Decode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@Autonomous (name = "Far Red")
+@Autonomous (name = "Far Blue")
 public class AutoFarRed extends OpMode {
     //---------------Driving Variables------------
     DcMotor rFront,rBack,lFront,lBack;
@@ -82,6 +82,8 @@ public class AutoFarRed extends OpMode {
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        kicker.setPosition(1);
+
 
         //Auto init
 
@@ -100,7 +102,7 @@ public class AutoFarRed extends OpMode {
                 return;
             }
 
-            moveMotorToPosition(-300,-300,300,300, 0.5);
+            moveMotorToPosition(-100,-100,100,100, 0.5);
 
         }
         else if (targetPositionIndex == 2) {
@@ -141,7 +143,7 @@ public class AutoFarRed extends OpMode {
                         kicker.setPosition(1);
                     }
 
-                    if (getRuntime() > 0.5) {
+                    if (getRuntime() > 0.75) {
 
                         resetRuntime();
 
@@ -163,6 +165,8 @@ public class AutoFarRed extends OpMode {
 
                     autoAlign = false;
 
+                    intake.setPower(0);
+
                     if (getRuntime() > 1) {
                         moveMotorToPosition(-500,-500,-500,-500,0.5);
                     }
@@ -181,11 +185,11 @@ public class AutoFarRed extends OpMode {
         }
 
         webcam.update();
-        AprilTagDetection id24 = webcam.getTagBySpecificID(24);
+        AprilTagDetection id20 = webcam.getTagBySpecificID(24);
 
         if (autoAlign) {
-            if (id24 != null) {
-                error = goalX - id24.ftcPose.bearing;
+            if (id20 != null) {
+                error = goalX - id20.ftcPose.bearing;
 
                 if (Math.abs(error) < angleTolerance) {
                     rotate = 0;

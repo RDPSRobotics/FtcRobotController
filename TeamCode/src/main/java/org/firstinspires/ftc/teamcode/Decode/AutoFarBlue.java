@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Decode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@Autonomous (name = "Far Blue")
+@Autonomous (name = "Far Red")
 public class AutoFarBlue extends OpMode {
     //---------------Driving Variables------------
     DcMotor rFront,rBack,lFront,lBack;
@@ -100,7 +100,7 @@ public class AutoFarBlue extends OpMode {
                 return;
             }
 
-            moveMotorToPosition(300,300,-300,-300, 0.5);
+            moveMotorToPosition(100,100,-100,-100, 0.5);
 
         }
         else if (targetPositionIndex == 2) {
@@ -181,11 +181,11 @@ public class AutoFarBlue extends OpMode {
         }
 
         webcam.update();
-        AprilTagDetection id20 = webcam.getTagBySpecificID(20);
+        AprilTagDetection id24 = webcam.getTagBySpecificID(20);
 
         if (autoAlign) {
-            if (id20 != null) {
-                error = goalX - id20.ftcPose.bearing;
+            if (id24 != null) {
+                error = goalX - id24.ftcPose.bearing;
 
                 if (Math.abs(error) < angleTolerance) {
                     rotate = 0;

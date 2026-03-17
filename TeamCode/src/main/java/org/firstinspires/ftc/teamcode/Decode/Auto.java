@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Decode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -9,11 +9,10 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Mechanism.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@Autonomous (name = "Close Blue")
+@Autonomous (name = "Close Red")
 public class Auto extends OpMode {
     //---------------Driving Variables------------
     DcMotor rFront,rBack,lFront,lBack;
@@ -173,11 +172,11 @@ public class Auto extends OpMode {
         }
 
         webcam.update();
-        AprilTagDetection id20 = webcam.getTagBySpecificID(20);
+        AprilTagDetection id24 = webcam.getTagBySpecificID(24);
 
         if (autoAlign) {
-            if (id20 != null) {
-                error = goalX - id20.ftcPose.bearing;
+            if (id24 != null) {
+                error = goalX - id24.ftcPose.bearing;
 
                 if (Math.abs(error) < angleTolerance) {
                     rotate = 0;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Decode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@Autonomous (name = "Close Red")
+@Autonomous (name = "Close Blue")
 public class AutoCloseRed extends OpMode {
     //---------------Driving Variables------------
     DcMotor rFront,rBack,lFront,lBack;
@@ -171,11 +171,11 @@ public class AutoCloseRed extends OpMode {
         }
 
         webcam.update();
-        AprilTagDetection id24 = webcam.getTagBySpecificID(24);
+        AprilTagDetection id20 = webcam.getTagBySpecificID(20);
 
         if (autoAlign) {
-            if (id24 != null) {
-                error = goalX - id24.ftcPose.bearing;
+            if (id20 != null) {
+                error = goalX - id20.ftcPose.bearing;
 
                 if (Math.abs(error) < angleTolerance) {
                     rotate = 0;
