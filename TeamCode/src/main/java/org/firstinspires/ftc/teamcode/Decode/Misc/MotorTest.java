@@ -1,17 +1,17 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Decode.Misc;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotserver.internal.webserver.RobotControllerWebHandlers;
-
+@Disabled
 @TeleOp
 public class MotorTest extends OpMode {
 
     DcMotor lFlywheel;
-DcMotor rFlywheel;
+    DcMotor rFlywheel;
 
     public void init(){
    lFlywheel = hardwareMap.get(DcMotor.class,"lFlywheel") ;
@@ -24,7 +24,7 @@ DcMotor rFlywheel;
 
     public void loop(){
 
-        if (gamepad1.a ==true){
+        if (gamepad1.a){
             lFlywheel.setPower(0.5);
             rFlywheel.setPower(0.5);
         }

@@ -13,6 +13,9 @@ enum ShootState{START, SHOOT, INTAKE, END}
 @Disabled
 @TeleOp
 public class Shooting extends OpMode {
+
+    //Before you delete this. This was made by people named Cheyenne Maston, Cody Barreto, Eric Wei. I helped them make it as Club President - Cheeno Tinio
+
     //--------------Shooter Variables-------------
     public DcMotorEx rFlywheel;
     public DcMotorEx lFlywheel;

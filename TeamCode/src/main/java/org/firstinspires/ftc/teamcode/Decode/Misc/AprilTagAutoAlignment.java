@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Decode.Misc;
 
 import com.qualcomm.robotcore.util.Range;
 

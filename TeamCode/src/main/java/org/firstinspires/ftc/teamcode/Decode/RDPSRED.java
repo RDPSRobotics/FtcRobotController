@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Decode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Mechanism.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-
+@Disabled
 @TeleOp(name = "RDPS RED")
 public class RDPSRED extends OpMode {
 

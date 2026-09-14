@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Decode.Misc;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 
+@Disabled
 @Autonomous
 public class WebcamOpMode extends OpMode {
 
