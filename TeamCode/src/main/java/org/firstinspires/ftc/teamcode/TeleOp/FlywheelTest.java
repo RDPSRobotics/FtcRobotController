@@ -36,7 +36,7 @@ public class FlywheelTest extends OpMode {
         }
         else if (gamepad1.dpadUpWasPressed()) {
             flywheelPower -= 0.1;
-        } 
+        }
 
         telemetry.addData("Flywheel Power: ", flywheelPower);
 
