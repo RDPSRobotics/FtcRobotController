@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public class FlywheelTest extends OpMode {
 
     private DcMotorEx flywheel;
-    private double flywheelPower = 1;
+    private double flywheelPower = 856;
     private final double triggerDeadzone = 0.2;
 
     
@@ -24,18 +24,18 @@ public class FlywheelTest extends OpMode {
 
         if (gamepad1.right_trigger > triggerDeadzone) {
 
-            flywheel.setPower(flywheelPower);
+            flywheel.setVelocity(flywheelPower);
         }
         else {
 
-            flywheel.setPower(0);
+            flywheel.setVelocity(0);
         }
 
-        if (gamepad1.dpadDownWasPressed()) {
-            flywheelPower += 0.1;
+        if (gamepad1.dpad_down) {
+            flywheelPower -= 10;
         }
-        else if (gamepad1.dpadUpWasPressed()) {
-            flywheelPower -= 0.1;
+        else if (gamepad1.dpad_up) {
+            flywheelPower += 10;
         }
 
         telemetry.addData("Flywheel Power: ", flywheelPower);
