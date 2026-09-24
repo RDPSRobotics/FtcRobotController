@@ -32,7 +32,7 @@ public class FlywheelTest extends OpMode {
         }
 
         if (gamepad1.dpadDownWasPressed()) {
-            flywheelPower -= 0.1;
+            flywheelPower += 0.1;
         }
         else if (gamepad1.dpadUpWasPressed()) {
             flywheelPower -= 0.1;
