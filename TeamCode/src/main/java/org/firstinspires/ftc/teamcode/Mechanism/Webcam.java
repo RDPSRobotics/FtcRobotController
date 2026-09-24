@@ -13,80 +13,81 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Webcam {
-     private AprilTagProcessor aprilTagProcessor;
-     private VisionPortal visionPortal;
+    private AprilTagProcessor aprilTagProcessor;
+    private VisionPortal visionPortal;
 
-     private List<AprilTagDetection> detectedTags = new ArrayList<>();
+    private List<AprilTagDetection> detectedTags = new ArrayList<>();
 
-     private Telemetry telemetry;
+    private Telemetry telemetry;
 
-     public void init(HardwareMap hwMap,Telemetry telemetry) {
-         this.telemetry = telemetry;
+    public void init(HardwareMap hwMap,Telemetry telemetry) {
+        this.telemetry = telemetry;
 
-         aprilTagProcessor = new AprilTagProcessor.Builder()
-                 .setDrawTagID(true)
-                 .setDrawTagOutline(true)
-                 .setDrawAxes(true)
-                 .setDrawCubeProjection(true)
-                 .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
-                 .build();
+        aprilTagProcessor = new AprilTagProcessor.Builder()
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+                .build();
 
-         VisionPortal.Builder builder = new VisionPortal.Builder();
-         builder.setCamera(hwMap.get(WebcamName.class, "Webcam 1"));
-         builder.setCameraResolution((new Size(640,480)));
-         builder.addProcessor(aprilTagProcessor);
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        builder.setCamera(hwMap.get(WebcamName.class, "Webcam 1"));
+        builder.setCameraResolution((new Size(640,480)));
+        builder.addProcessor(aprilTagProcessor);
 
-         visionPortal = builder.build();
+        visionPortal = builder.build();
 
-         setManualExposure(6,240);
-     }
+        setManualExposure(6,240);
+    }
 
-     private void setManualExposure(int exposureMS, int gain) {
-         if (visionPortal == null || visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-             telemetry.addData("Camera", "Waiting.....");
+    private void setManualExposure(int exposureMS, int gain) {
+        if (visionPortal == null || visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting.....");
 
-             while (visionPortal == null || visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-                 try { Thread.sleep(20); } catch (InterruptedException ignore) {}
-             }
-             telemetry.addData("Camera", "Ready!");
-         }
+            while (visionPortal == null || visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                try { Thread.sleep(20); } catch (InterruptedException ignore) {}
+            }
+            telemetry.addData("Camera", "Ready!");
+        }
 
-         if (visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING) {
-             try {
-                 ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-                 GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+        if (visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING) {
+            try {
+                ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+                GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
 
-                 if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
-                     exposureControl.setMode(ExposureControl.Mode.Manual);
-                     Thread.sleep(50);
-                 }
+                if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                    exposureControl.setMode(ExposureControl.Mode.Manual);
+                    Thread.sleep(50);
+                }
 
-                 exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-                 Thread.sleep(20);
-                 gainControl.setGain(gain);
-                 Thread.sleep(20);
-             } catch (Exception e) {
-                 telemetry.addData("Camera Control Error", e.getMessage());
-                 telemetry.update();
-             }
-         }
-     }
+                exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+                Thread.sleep(20);
+                gainControl.setGain(gain);
+                Thread.sleep(20);
+            } catch (Exception e) {
+                telemetry.addData("Camera Control Error", e.getMessage());
+                telemetry.update();
+            }
+        }
+    }
 
-     public void update() {
-         detectedTags = aprilTagProcessor.getDetections();
-     }
+    public void update() {
+        detectedTags = aprilTagProcessor.getDetections();
+    }
 
-     public List<AprilTagDetection> getDetectedTags() {
-         return detectedTags;
-     }
+    public List<AprilTagDetection> getDetectedTags() {
+        return detectedTags;
+    }
 
-     public void displayDetectionTelemetry(AprilTagDetection detectedId) {
+     /*public void displayDetectionTelemetry(List<AprilTagDetection> detectedId) {
          if (detectedId == null) {
              return;
          }
@@ -100,20 +101,37 @@ public class Webcam {
              telemetry.addLine(String.format("\n==== (ID %d) Unknown", detectedId.id));
              telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detectedId.center.x, detectedId.center.y));
          }
-     }
+     } */
 
-     public AprilTagDetection getTagBySpecificID(int id) {
-         for (AprilTagDetection detection : detectedTags){
-             if (detection.id == id) {
-                 return detection;
-             }
-         }
-         return null;
-     }
+    public AprilTagDetection getTagBySpecificID(int id) {
+        for (AprilTagDetection detection : detectedTags) {
+            // Check if the object is an AprilTagSingleDetection or AprilTagClusterDetection
+            if (detection instanceof AprilTagSingleDetection) {
+                // Create local copy of detection but casting to AprilTagSingleDetection type
+                // so that we can properly interpret the metadata and id information.
+                AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
+                // Now that we have singleDet as an AprilTagSingleDetection object, we can
+                // read the metadata and id information from it.
+                if (singleDet.metadata != null) {
+                    // Notice this telemetry is using singleDet to get metadata and id.
+                    telemetry.addLine(String.format("\n==== (ID %d) %s", singleDet.id, singleDet.metadata.name));
+                    // Notice we can use the raw detection variable or our new singleDet
+                    // variable to get Pose information because the ftcPose is
+                    // inherited from the superclass and so it lives in both places.
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                }
+            }
+        }
+        return null;
+    }
 
-     public void stop() {
-         if (visionPortal != null) {
-             visionPortal.close();
-         }
-     }
+    public void stop() {
+        if (visionPortal != null) {
+            visionPortal.close();
+        }
+    }
+}
+
 }
