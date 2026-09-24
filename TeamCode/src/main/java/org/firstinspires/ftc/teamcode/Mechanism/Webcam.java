@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,7 @@ public class Webcam {
          return detectedTags;
      }
 
-     public void displayDetectionTelemetry(AprilTagDetection detectedId) {
+     /*public void displayDetectionTelemetry(List<AprilTagDetection> detectedId) {
          if (detectedId == null) {
              return;
          }
@@ -100,12 +101,27 @@ public class Webcam {
              telemetry.addLine(String.format("\n==== (ID %d) Unknown", detectedId.id));
              telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detectedId.center.x, detectedId.center.y));
          }
-     }
+     } */
 
      public AprilTagDetection getTagBySpecificID(int id) {
-         for (AprilTagDetection detection : detectedTags){
-             if (detection.id == id) {
-                 return detection;
+         for (AprilTagDetection detection : detectedTags) {
+             // Check if the object is an AprilTagSingleDetection or AprilTagClusterDetection
+             if (detection instanceof AprilTagSingleDetection) {
+                 // Create local copy of detection but casting to AprilTagSingleDetection type
+                 // so that we can properly interpret the metadata and id information.
+                 AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
+                 // Now that we have singleDet as an AprilTagSingleDetection object, we can
+                 // read the metadata and id information from it.
+                 if (singleDet.metadata != null) {
+                     // Notice this telemetry is using singleDet to get metadata and id.
+                     telemetry.addLine(String.format("\n==== (ID %d) %s", singleDet.id, singleDet.metadata.name));
+                     // Notice we can use the raw detection variable or our new singleDet
+                     // variable to get Pose information because the ftcPose is
+                     // inherited from the superclass and so it lives in both places.
+                     telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                     telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                     telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                 }
              }
          }
          return null;
