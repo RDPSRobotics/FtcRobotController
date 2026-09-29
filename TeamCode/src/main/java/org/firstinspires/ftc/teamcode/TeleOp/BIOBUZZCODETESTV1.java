@@ -19,7 +19,7 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
     private DcMotorEx flywheel;
 
-    private double flywheelMaxPower;
+    private final double flywheelMaxPower = 1300;
 
     private final double triggerDeadzone = 0.2;
 
