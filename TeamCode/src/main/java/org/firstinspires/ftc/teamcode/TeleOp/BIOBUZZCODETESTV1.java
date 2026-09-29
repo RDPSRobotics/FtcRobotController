@@ -23,16 +23,11 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
     private final double triggerDeadzone = 0.2;
 
-    //--------------Shooter Variables-------------
+    //--------------Intake Variables-------------
 
-    private CRServo rCornerIntake;
-    private CRServo lCornerIntake;
+    private DcMotorEx intake;
 
-    private final double cornerIntakePower = 0.5;
-
-    private DcMotor intake;
-
-    private final double intakePower = 0.5;
+    private final double intakePower = 168;
 
     @Override
     public void init()
@@ -42,10 +37,7 @@ public class BIOBUZZCODETESTV1 extends OpMode {
         flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
         flywheelMaxPower = 0.5f;
 
-        rCornerIntake = hardwareMap.get(CRServo.class, "rCornerIntake");
-        lCornerIntake = hardwareMap.get(CRServo.class, "lCornerIntake");
-
-        intake = hardwareMap.get(DcMotor.class, "intake");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
     }
 
     @Override
@@ -85,11 +77,11 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
         if (gamepad1.right_bumper) {
 
-            rCornerIntake.setPower(cornerIntakePower);
-            lCornerIntake.setPower(cornerIntakePower);
+            intake.setVelocity(intakePower);
 
-            intake.setPower(intakePower);
-
+        }
+        else {
+            intake.setVelocity(0);
         }
 
     }
