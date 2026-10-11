@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Mechanism.MecanumDrive;
@@ -35,7 +33,6 @@ public class BIOBUZZCODETESTV1 extends OpMode {
         drive.init(hardwareMap);
 
         flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
-        flywheelMaxPower = 0.5f;
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
     }
@@ -65,7 +62,7 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
         if (gamepad1.right_trigger > triggerDeadzone) {
 
-            flywheel.setPower(flywheelMaxPower);
+            flywheel.setVelocity(flywheelMaxPower);
         }
         else {
 
@@ -81,7 +78,7 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
         }
         else {
-            intake.setVelocity(0);
+            intake.setVelocity(-28);
         }
 
     }
