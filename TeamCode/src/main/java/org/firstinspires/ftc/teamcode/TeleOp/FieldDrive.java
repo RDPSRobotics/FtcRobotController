@@ -21,11 +21,12 @@ public class FieldDrive extends OpMode {
 
     @Override
     public void loop() {
+
         forward = gamepad1.left_stick_y;
         strafe = gamepad1.left_stick_x;
         rotate = gamepad1.right_stick_x;
 
-        drive.driveFieldRelative(forward,strafe,rotate);
+        drive.driveFieldRelative(forward,-strafe,rotate);
 
     }
 }
