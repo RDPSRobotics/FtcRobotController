@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
@@ -18,7 +19,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 public class Webcam {
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
@@ -81,29 +81,49 @@ public class Webcam {
 
     public void update() {
         detectedTags = aprilTagProcessor.getDetections();
+
+        displayDetectionTelemetry(getDetectedTags());
     }
 
     public List<AprilTagDetection> getDetectedTags() {
         return detectedTags;
     }
 
-     /*public void displayDetectionTelemetry(List<AprilTagDetection> detectedId) {
+     public void displayDetectionTelemetry(List<AprilTagDetection> detectedId) {
+
          if (detectedId == null) {
              return;
          }
+         List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
+         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
-         if (detectedId.metadata != null) {
-             telemetry.addLine(String.format("\n==== (ID %d) %s", detectedId.id, detectedId.metadata.name));
-             telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detectedId.ftcPose.x, detectedId.ftcPose.y, detectedId.ftcPose.z));
-             telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detectedId.ftcPose.pitch, detectedId.ftcPose.roll, detectedId.ftcPose.yaw));
-             telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detectedId.ftcPose.range, detectedId.ftcPose.bearing, detectedId.ftcPose.elevation));
-         } else {
-             telemetry.addLine(String.format("\n==== (ID %d) Unknown", detectedId.id));
-             telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detectedId.center.x, detectedId.center.y));
+         // Step through the list of detections and display info for each one.
+         for (AprilTagDetection detection : currentDetections) {
+             if (detection instanceof AprilTagSingleDetection) {
+                 AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
+
+                 if (singleDet.metadata != null) {
+                     telemetry.addLine(String.format("\n==== (ID %d) %s", singleDet.id, singleDet.metadata.name));
+                     telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                     telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                     telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                 } else {
+                     telemetry.addLine(String.format("\n==== (ID %d) Unknown", singleDet.id));
+                     telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", singleDet.center.x, singleDet.center.y));
+                 }
+             } else {
+                 AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
+                 telemetry.addLine(String.format("\n==== Tag Cluster (%s)", clusterDet.metadata.name));
+                 telemetry.addLine(String.format("Percent tags found: %d", clusterDet.percentClusterFound));
+                 telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                 telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                 telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+             }
          }
-     } */
+     }
 
     public AprilTagDetection getTagBySpecificID(int id) {
+        
         for (AprilTagDetection detection : detectedTags) {
             // Check if the object is an AprilTagSingleDetection or AprilTagClusterDetection
             if (detection instanceof AprilTagSingleDetection) {
