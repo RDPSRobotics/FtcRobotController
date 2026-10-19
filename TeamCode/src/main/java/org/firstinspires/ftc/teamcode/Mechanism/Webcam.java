@@ -82,18 +82,15 @@ public class Webcam {
     public void update() {
         detectedTags = aprilTagProcessor.getDetections();
 
-        displayDetectionTelemetry(getDetectedTags());
+        displayDetectionTelemetry();
     }
 
     public List<AprilTagDetection> getDetectedTags() {
         return detectedTags;
     }
 
-     public void displayDetectionTelemetry(List<AprilTagDetection> detectedId) {
+     public void displayDetectionTelemetry() {
 
-         if (detectedId == null) {
-             return;
-         }
          List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
          telemetry.addData("# AprilTags Detected", currentDetections.size());
 
@@ -122,28 +119,7 @@ public class Webcam {
          }
      }
 
-    public AprilTagDetection getTagBySpecificID(int id) {
-        
-        for (AprilTagDetection detection : detectedTags) {
-            // Check if the object is an AprilTagSingleDetection or AprilTagClusterDetection
-            if (detection instanceof AprilTagSingleDetection) {
-                // Create local copy of detection but casting to AprilTagSingleDetection type
-                // so that we can properly interpret the metadata and id information.
-                AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
-                // Now that we have singleDet as an AprilTagSingleDetection object, we can
-                // read the metadata and id information from it.
-                if (singleDet.metadata != null) {
-                    // Notice this telemetry is using singleDet to get metadata and id.
-                    telemetry.addLine(String.format("\n==== (ID %d) %s", singleDet.id, singleDet.metadata.name));
-                    // Notice we can use the raw detection variable or our new singleDet
-                    // variable to get Pose information because the ftcPose is
-                    // inherited from the superclass and so it lives in both places.
-                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-                }
-            }
-        }
+    public AprilTagDetection getTagBySpecificID() {
         return null;
     }
 
