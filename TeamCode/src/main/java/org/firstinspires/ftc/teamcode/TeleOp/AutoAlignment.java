@@ -20,6 +20,21 @@ public class AutoAlignment extends OpMode {
 
     double forward,strafe,rotate;
 
+    double kP = 0.002;
+    double error = 0;
+    double lastError = 0;
+    double goalX = 0;
+    double angleTolerance = 0.4;
+    double kD = 0.0001;
+    double curTime = 0;
+    double lastTime = 0;
+
+    //------------------CONTROLLER BASED PD TUNING-------------------------
+
+    double[] stepSizes = {0.1, 0.01, 0.001, 0.0001};
+
+    int stepIndex = 1;
+
     @Override
     public void init() {
 
