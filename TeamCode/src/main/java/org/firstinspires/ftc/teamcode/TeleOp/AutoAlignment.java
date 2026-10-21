@@ -24,7 +24,7 @@ public class AutoAlignment extends OpMode {
 
         webcam.init(hardwareMap, telemetry);
 
-        drive.init(hardwareMap);
+        //drive.init(hardwareMap);
 
     }
 
@@ -33,7 +33,7 @@ public class AutoAlignment extends OpMode {
 
         DetectingAprilTag();
 
-        Driving();
+        //Driving();
     }
 
     public void DetectingAprilTag() {
