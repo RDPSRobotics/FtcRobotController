@@ -94,7 +94,41 @@ public class AutoAlignment extends OpMode {
             lastError = 0;
         }
 
-        //Driving();
+        //Increasing Step Sizes
+        if (gamepad1.bWasPressed()) {
+            stepIndex = (stepIndex + 1) % stepSizes.length;
+        }
+
+        if (gamepad1.dpadLeftWasPressed()) {
+            kP -= stepSizes[stepIndex];
+        }
+        if (gamepad1.dpadRightWasPressed())  {
+            kP += stepSizes[stepIndex];
+        }
+
+        if (gamepad1.dpadUpWasPressed()) {
+            kD -=  stepSizes[stepIndex];
+        }
+        if (gamepad1.dpadDownWasPressed()) {
+            kD += stepSizes[stepIndex];
+        }
+
+        //Telemetry
+        if (clusterDetection != null) {
+            if (gamepad1.left_trigger > 0.3) {
+                telemetry.addLine("AUTO ALIGN");
+            }
+            webcam.displayDetectionTelemetry();
+            telemetry.addData("Error", error);
+
+        } else {
+            telemetry.addLine("MANUAL DRIVE");
+        }
+
+        telemetry.addLine("-----------------------------");
+        telemetry.addData("Tuning P", "%.4f (D Pad L/R)", kP );
+        telemetry.addData("Tuning D", "%.4f(D Pad U/P)", kD);
+        telemetry.addData("Step Sizes", "%.4f (B Button)", stepSizes[stepIndex]);
     }
 
     public void Driving() {
