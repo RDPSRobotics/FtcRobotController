@@ -54,6 +54,11 @@ public class AutoAlignment extends OpMode {
         //Driving();
     }
 
+    public void start() {
+        resetRuntime();
+        curTime = getRuntime();
+    }
+
     public void DetectingAprilTag() {
 
         webcam.update();
