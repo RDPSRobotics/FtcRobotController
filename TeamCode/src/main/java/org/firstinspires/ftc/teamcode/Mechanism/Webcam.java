@@ -80,6 +80,7 @@ public class Webcam {
     }
 
     public void update() {
+
         detectedTags = aprilTagProcessor.getDetections();
 
         displayDetectionTelemetry();
