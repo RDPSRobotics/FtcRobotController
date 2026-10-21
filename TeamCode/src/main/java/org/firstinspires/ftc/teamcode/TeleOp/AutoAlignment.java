@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +59,40 @@ public class AutoAlignment extends OpMode {
         webcam.update();
 
         AprilTagClusterDetection clusterDetection = webcam.getAprilTagCluster();
+
+
+        //Auto Align Rotation Logic
+
+        if (gamepad1.left_trigger > 0.3) {
+            if (clusterDetection != null) {
+                error = goalX - clusterDetection.ftcPose.bearing;
+
+                if (Math.abs(error) < angleTolerance) {
+                    rotate = 0;
+                }
+                else {
+                    double pTerm = -error * kP;
+
+                    curTime = getRuntime();
+                    double dT = curTime - lastTime;
+                    double dTerm = ((-error - lastError)/dT) * kD;
+
+                    rotate = Range.clip(pTerm + dTerm, -0.4, 0.4);
+
+                    lastError = error;
+                    lastTime = curTime;
+
+                }
+            }
+            else {
+                lastTime = getRuntime();
+                lastError = 0;
+            }
+        }
+        else {
+            lastTime = getRuntime();
+            lastError = 0;
+        }
 
         //Driving();
     }
