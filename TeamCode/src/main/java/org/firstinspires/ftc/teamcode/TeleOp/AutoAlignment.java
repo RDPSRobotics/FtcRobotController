@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.firstinspires.ftc.teamcode.Mechanism.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Mechanism.Webcam;
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @TeleOp
@@ -40,11 +41,9 @@ public class AutoAlignment extends OpMode {
 
         webcam.update();
 
-        List<AprilTagDetection> aprilTagDetectionList = webcam.getDetectedTags();
+        AprilTagClusterDetection clusterDetection = webcam.getAprilTagCluster();
 
-        if (!aprilTagDetectionList.isEmpty()) {
-            webcam.displayDetectionTelemetry();
-        }
+        //Driving();
     }
 
     public void Driving() {

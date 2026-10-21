@@ -120,7 +120,17 @@ public class Webcam {
          }
      }
 
-    public AprilTagDetection getTagBySpecificID() {
+    public AprilTagClusterDetection getAprilTagCluster() {
+
+        for (AprilTagDetection detection : aprilTagProcessor.getDetections()) {
+            if (detection instanceof AprilTagClusterDetection) {
+                AprilTagClusterDetection cluster = (AprilTagClusterDetection) detection;
+
+                return cluster;
+                // Process your cluster here
+            }
+        }
+
         return null;
     }
 
