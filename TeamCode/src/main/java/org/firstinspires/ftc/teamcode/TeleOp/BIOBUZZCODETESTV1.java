@@ -17,15 +17,15 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
     private DcMotorEx flywheel;
 
-    private final double flywheelMaxPower = 1300;
+    public final double flywheelMaxPower = 1300;
 
-    private final double triggerDeadzone = 0.2;
+    public final double triggerDeadzone = 0.2;
 
     //--------------Intake Variables-------------
 
     private DcMotorEx intake;
 
-    private final double intakePower = 168;
+    public final double intakePower = 0.5;
 
     @Override
     public void init()
@@ -35,6 +35,8 @@ public class BIOBUZZCODETESTV1 extends OpMode {
         flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
+
+        intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
     @Override
@@ -74,11 +76,11 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
         if (gamepad1.right_bumper) {
 
-            intake.setVelocity(intakePower);
+            intake.setPower(intakePower);
 
         }
         else {
-            intake.setVelocity(-28);
+            intake.setPower(0);
         }
 
     }
