@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Mechanism.MecanumDrive;
 
@@ -21,6 +22,10 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
     public final double triggerDeadzone = 0.2;
 
+    private Servo stopper;
+
+    public boolean stopShooter;
+
     //--------------Intake Variables-------------
 
     private DcMotorEx intake;
@@ -34,6 +39,12 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
         flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
 
+        stopper = hardwareMap.get(Servo.class, "stopper");
+
+        stopper.setPosition(0);
+
+        stopShooter = true;
+
         intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -45,6 +56,8 @@ public class BIOBUZZCODETESTV1 extends OpMode {
         setDrive();
 
         setShooter();
+
+        setStopper();
 
         setIntake();
     }
@@ -70,6 +83,28 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
             flywheel.setPower(0);
         }
+    }
+
+    private void setStopper() {
+
+        if (gamepad1.aWasPressed()) {
+
+            if (stopShooter) {
+
+                stopper.setPosition(1);
+
+                stopShooter = false;
+            }
+            else if (!stopShooter) {
+
+
+                stopper.setPosition(1);
+
+                stopShooter = true;
+            }
+
+        }
+
     }
 
     private void setIntake() {
