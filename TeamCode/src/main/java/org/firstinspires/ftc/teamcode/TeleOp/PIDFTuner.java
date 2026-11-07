@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-@Disabled
+
 @TeleOp(name = "Motor/PIDF Tuner")
 public class PIDFTuner extends OpMode {
 
     public DcMotorEx motor;
-    public double highVelocity = 1000;
+    public double highVelocity = 500;
 
     public double lowVelocity = 0;
 
