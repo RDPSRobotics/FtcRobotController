@@ -91,14 +91,11 @@ public class BIOBUZZCODETESTV1 extends OpMode {
 
             if (stopShooter) {
 
-                stopper.setPosition(1);
 
                 stopShooter = false;
             }
             else if (!stopShooter) {
 
-
-                stopper.setPosition(1);
 
                 stopShooter = true;
             }
