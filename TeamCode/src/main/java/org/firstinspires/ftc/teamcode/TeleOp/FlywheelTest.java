@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @TeleOp
 public class FlywheelTest extends OpMode {
@@ -12,12 +14,18 @@ public class FlywheelTest extends OpMode {
     private double flywheelPower = 0;
     private boolean isShoot;
 
+    PIDFCoefficients fpidfCoefficients = new PIDFCoefficients(1.7,0,0,14.1);
+
     static final double TICKS_PER_REV = 28;
 
     public void init() {
 
         flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, fpidfCoefficients);
 
     }
 
