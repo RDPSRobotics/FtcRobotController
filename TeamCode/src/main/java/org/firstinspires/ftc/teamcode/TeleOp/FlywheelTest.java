@@ -12,7 +12,8 @@ public class FlywheelTest extends OpMode {
     private double flywheelPower = 0;
     private boolean isShoot;
 
-    
+    static final double TICKS_PER_REV = 28;
+
     public void init() {
 
         flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
@@ -43,7 +44,19 @@ public class FlywheelTest extends OpMode {
             flywheelPower += 100;
         }
 
+        double ticksPerSecond = flywheel.getVelocity();
+
+        // Convert ticks per second to RPM
+        double rpm = (ticksPerSecond / TICKS_PER_REV) * 60.0;
+
+        telemetry.addData("Ticks/Sec", ticksPerSecond);
+        telemetry.addData("Current RPM", rpm);
+
+        telemetry.addLine("Start Flywheel(RBumper)");
+        telemetry.addLine("Increase or Decrease velocity(Dpad Down or Up)");
+
         telemetry.addData("Flywheel Power: ", flywheelPower);
+        telemetry.update();
 
     }
 
