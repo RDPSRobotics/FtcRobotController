@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 @TeleOp(name = "Motor/PIDF Tuner")
 public class PIDFTuner extends OpMode {
 
@@ -20,7 +22,7 @@ public class PIDFTuner extends OpMode {
 
     double P = 0;
 
-    double[] stepSizes = {10.0, 1.0,0.1 , 0.001};
+    double[] stepSizes = {100.0,10.0, 1.0,0.1 , 0.001};
 
     int stepIndex = 1;
 
@@ -39,16 +41,20 @@ public class PIDFTuner extends OpMode {
     @Override
     public void loop() {
 
+
+        //Motor On
         if (gamepad1.yWasPressed()) {
             if (curTargetVelocity == highVelocity) {
                 curTargetVelocity = lowVelocity;
             } else  { curTargetVelocity = highVelocity; }
         }
 
+        //Changing Step size
         if (gamepad1.bWasPressed()) {
             stepIndex = (stepIndex + 1) % stepSizes.length;
         }
 
+        //Tuning F
         if (gamepad1.dpadLeftWasPressed()) {
             F -= stepSizes[stepIndex];
         }
@@ -56,6 +62,8 @@ public class PIDFTuner extends OpMode {
             F += stepSizes[stepIndex];
         }
 
+
+        //Tuning P
         if (gamepad1.dpadUpWasPressed()) {
             P += stepSizes[stepIndex];
         }
@@ -64,12 +72,20 @@ public class PIDFTuner extends OpMode {
             P -= stepSizes[stepIndex];
         }
 
+
+        //Changing velocity
+        if (gamepad1.rightBumperWasPressed()) {
+            highVelocity += stepSizes[stepIndex];
+        }
+
+        if (gamepad1.leftBumperWasPressed()) {
+            highVelocity -= stepSizes[stepIndex];
+        }
+
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0,F );
         motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
 
         motor.setVelocity(curTargetVelocity);
-
-
 
         double curVelocity = motor.getVelocity();
         double error = curTargetVelocity - curVelocity;
@@ -81,6 +97,8 @@ public class PIDFTuner extends OpMode {
         telemetry.addData("Tuning P", "%.4f (D-Pad U/D)", P);
         telemetry.addData("Tuning F", "%.4f (D-Pad L/R)", F);
         telemetry.addData("Step Size", "%.4f (B Button", stepSizes[stepIndex]);
+        telemetry.addLine("Y to start motor");
+        telemetry.addLine("Changing Velocity (Bumper R/L)");
 
     }
 }
